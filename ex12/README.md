@@ -20,6 +20,9 @@
     <br> 
 </p>
 
+Here, you need a file in your execution.
+I propose file012
+
 <p align="center">
   <img src="./exercice.png" alt="COBOL exercice">
 </p>

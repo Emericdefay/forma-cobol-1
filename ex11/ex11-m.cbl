@@ -1,5 +1,5 @@
       *****************************************************************
-      * Program name:    PGM011M1
+      * Program name:    PGM011M
       *
       * Original author: DEFAY E.                                
       *
@@ -10,7 +10,7 @@
       *                                                               
       *****************************************************************
        IDENTIFICATION DIVISION.
-       PROGRAM-ID.    PGM011M1.
+       PROGRAM-ID.    PGM011M.
        AUTHOR.        DEFAY E. 
        INSTALLATION.  COBOL DEVELOPMENT CENTER. 
        DATE-WRITTEN.  16/11/22. 

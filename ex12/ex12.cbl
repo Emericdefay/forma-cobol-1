@@ -17,74 +17,65 @@
        DATE-COMPILED. 16/11/22. 
        SECURITY.      NON-CONFIDENTIAL.
       *****************************************************************
+       ENVIRONMENT DIVISION. 
+       INPUT-OUTPUT SECTION. 
+       FILE-CONTROL. 
+           SELECT COMBINATIONS
+           ASSIGN TO FILEIN
+      *    ORGANIZATION IS INDEXED
+      *    ACCESS MODE IS SEQUENTIAL
+      *    RECORD KEY IS data-name-1
+           FILE STATUS IS FC-FS-COM.
+      *****************************************************************
        DATA DIVISION. 
-       WORKING-STORAGE SECTION.
+       FILE SECTION. 
+       FD COMBINATIONS
+           RECORD CONTAINS 80 CHARACTERS.
        01 ZONE-ACCEPT.
-           02 CAS   PIC X(01).
-              88    IS-A VALUE 'A'.
-              88    IS-B VALUE 'B'.
-              88    IS-C VALUE 'C'.
-              88    IS-D VALUE 'D'.
-              88    IS-E VALUE 'E'.
-              88    IS-F VALUE 'F'.
-           02 MNT-X PIC 9(6).
-       01 ZONE-A.
-           02 MNT-A PIC 9(5) BINARY.
-       01 ZONE-B.
-           02 MNT-B PIC 9(7) COMP.
-       01 ZONE-C.
-           02 MNT-C PIC 9(5) COMP-4.
-       01 ZONE-D.
-           02 MNT-D PIC 9(3) BINARY.
-       01 ZONE-E.
-           02 MNT-E PIC 9(7) COMP-3.
-       01 ZONE-F.
-           02 MNT-F PIC S9(4) COMP-3.
+           02 CAS     PIC X(01).
+           02 FILLER  PIC X.
+           02 MNT-X   PIC 9(6).
+           02 FILLER  PIC X(72).
+       WORKING-STORAGE SECTION.
+       01 WS-COUNTER  PIC 9(02).
+       01 FC-FS-COM   PIC X(02).
+           88 FS-COM-END VALUE '10'.
+       01 WS-CALL-PGM PIC X(08) VALUE "PGM012M1".
       *****************************************************************
        PROCEDURE DIVISION.
-           PERFORM 000-PARAM THRU 000-EXIT.
-           PERFORM 100-CALL  THRU 100-EXIT.
+           PERFORM 000-RFILE THRU 000-EXIT.
+           PERFORM 100-READF THRU 100-EXIT.
+           PERFORM 999-CFILE THRU 999-EXIT.
            STOP RUN.
       *****************************************************************
       *  This routine should 
       *****************************************************************
-       000-PARAM.
-           ACCEPT CAS.
-           ACCEPT MNT-X.
+       000-RFILE.
+           OPEN INPUT COMBINATIONS.
        000-EXIT. 
+           EXIT.
+
+       999-CFILE.
+           CLOSE COMBINATIONS.
+       999-EXIT. 
            EXIT.
       *****************************************************************
       *  This routine should 
       *****************************************************************
-       100-CALL.
-           EVALUATE TRUE 
-              WHEN IS-A PERFORM 101-MVTOA
-              WHEN IS-B PERFORM 102-MVTOB
-              WHEN IS-C PERFORM 103-MVTOC
-              WHEN IS-D PERFORM 104-MVTOD
-              WHEN IS-E PERFORM 105-MVTOE
-              WHEN IS-F PERFORM 106-MVTOF
-           END-EVALUATE.
+       100-READF.
+           PERFORM VARYING WS-COUNTER FROM 1 BY 1
+              UNTIL FS-COM-END
+              READ COMBINATIONS  
+                 NOT AT END
+                    PERFORM 101-CALL
+              END-READ
+           END-PERFORM.
        100-EXIT. 
            EXIT.
       *****************************************************************
       *  Those routines MOVE MNT-X to MNT-*
       *****************************************************************
-       101-MVTOA.
-           MOVE MNT-X TO MNT-A.
-           DISPLAY 'MNT-A : ' MNT-A.
-       102-MVTOB.
-           MOVE MNT-X TO MNT-B.
-           DISPLAY 'MNT-B : ' MNT-B.
-       103-MVTOC.
-           MOVE MNT-X TO MNT-C.
-           DISPLAY 'MNT-C : ' MNT-C.
-       104-MVTOD.
-           MOVE MNT-X TO MNT-D.
-           DISPLAY 'MNT-D : ' MNT-D.
-       105-MVTOE.
-           MOVE MNT-X TO MNT-E.
-           DISPLAY 'MNT-E : ' MNT-E.
-       106-MVTOF.
-           MOVE MNT-X TO MNT-F.
-           DISPLAY 'MNT-F : ' MNT-F.
+       101-CALL.
+           CALL WS-CALL-PGM USING BY CONTENT CAS,
+                                  BY CONTENT MNT-X,
+                                  BY CONTENT WS-COUNTER.

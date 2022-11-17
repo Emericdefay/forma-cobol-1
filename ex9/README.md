@@ -20,6 +20,8 @@
     <br> 
 </p>
 
+Here, you need a parameter in your execution.
+
 <p align="center">
   <img src="./exercice.png" alt="COBOL exercice">
 </p>

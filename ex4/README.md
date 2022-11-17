@@ -20,6 +20,9 @@
     <br> 
 </p>
 
+Cette fois-ci, l'execution prend un parametre : WS-NOTE.  
+Il se met dans le SYSIN.
+
 <p align="center">
   <img src="./exercice.png" alt="COBOL exercice">
 </p>

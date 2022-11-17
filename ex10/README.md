@@ -20,6 +20,11 @@
     <br> 
 </p>
 
+Here, you need THREE parameters in your execution.
+0000000 <- the salary
+a       <- the note
+0000000 <- the seniority
+
 <p align="center">
   <img src="./exercice.png" alt="COBOL exercice">
 </p>

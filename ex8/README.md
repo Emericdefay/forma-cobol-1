@@ -20,6 +20,9 @@
     <br> 
 </p>
 
+Here, you read a file, so you need one.  
+I propose a file (file008), but you're free to get yours.
+
 <p align="center">
   <img src="./exercice.png" alt="COBOL exercice">
 </p>

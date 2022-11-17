@@ -20,6 +20,14 @@
     <br> 
 </p>
 
+ex11-m.cbl is a MODULE of ex11.cbl  
+So you have to compile it BEFORE ex11.cbl  
+
+That's why I made 2 jcl-compilation. Execute them in order.
+
+
+Also, You have to read a file, I propose something : file011.txt
+
 <p align="center">
   <img src="./exercice.png" alt="COBOL exercice">
 </p>
