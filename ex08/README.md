@@ -23,6 +23,8 @@
 Here, you read a file, so you need one.  
 I propose a file (file008), but you're free to get yours.
 
+You also need a parameter, which is an ALPHANUMERIC TO DETECT.
+
 <p align="center">
   <img src="./exercice.png" alt="COBOL exercice">
 </p>

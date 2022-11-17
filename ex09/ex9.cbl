@@ -46,7 +46,7 @@
        01  PJ-DEPT-DEF    PIC 9(02) VALUE 75. 
       *****************************************************************
        PROCEDURE DIVISION.
-           PERFORM 000-PARMS.
+           PERFORM 000-PARMS THRU 000-EXIT.
            PERFORM 100-FILER THRU 100-EXIT.
            PERFORM 200-DISPV THRU 200-EXIT.
            PERFORM 300-EXITP THRU 300-EXIT.
@@ -59,6 +59,11 @@
            IF PJ-DEPT = SPACE OR LOW-VALUE THEN
               PERFORM 001-DEFVA
            END-IF.
+       000-EXIT. 
+           EXIT.
+      *****************************************************************
+      *  This routine put default value(s) to variable(s)
+      *****************************************************************
        001-DEFVA.
            MOVE PJ-DEPT-DEF TO PJ-DEPT.
       *****************************************************************
@@ -76,15 +81,13 @@
            SEARCH WS-ELEMENT 
               AT END DISPLAY 'DEPT : ' PJ-DEPT ' NOT FOUND.'
               WHEN WS-NUM-DEPT (I) = PJ-DEPT 
-              PERFORM 120-DISPL THRU 120-EXIT
+              PERFORM 120-DISPL
            END-SEARCH.  
       *****************************************************************
       *  This routine should display a line of the array.
       *****************************************************************
        120-DISPL.
            DISPLAY WS-ELEMENT (I).
-       120-EXIT.
-           EXIT.
       *****************************************************************
       *  This routine should display variables (if any).
       *****************************************************************

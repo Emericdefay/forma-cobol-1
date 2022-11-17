@@ -20,7 +20,7 @@
     <br> 
 </p>
 
-Here, you need THREE parameters in your execution.   
+Here, you need THREE parameters in your jcl-execution.jcl    
 0000000 <- the salary   
 a       <- the note   
 0000000 <- the seniority   

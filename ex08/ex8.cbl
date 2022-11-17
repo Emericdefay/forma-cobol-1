@@ -32,6 +32,7 @@
       /    FILEOUT2
            SELECT FILEOUT2
            ASSIGN TO FILEOUT2.
+      *****************************************************************
        DATA DIVISION.
        FILE SECTION. 
        FD FILEIN.
@@ -73,12 +74,13 @@
        01 PJ-CHR         PIC X.
       *****************************************************************
        PROCEDURE DIVISION.
-           PERFORM 000-PARMS.
-           PERFORM 000-OFILE.
-           PERFORM 200-DISPV THRU 200-EXIT.
+           PERFORM 000-PARMS THRU 000-EXIT.
+      /    DO PERFORM ALSO :
+      /    PERFORM 000-DISPV.
+      /    PERFORM 000-OFILE.
            PERFORM 100-FILER THRU 100-EXIT.
-           PERFORM 300-EXITP THRU 300-EXIT.
-           PERFORM 000-CFILE.
+           PERFORM 200-EXITP THRU 200-EXIT.
+           PERFORM 999-CFILE THRU 999-EXIT.
            STOP RUN.
       *****************************************************************
       *  This routine handle parameters
@@ -88,19 +90,26 @@
            IF PJ-CHR = SPACE OR LOW-VALUE THEN
               PERFORM 001-DEFVA
            END-IF.
-       001-DEFVA.
-           MOVE PJ-CHR-DEFAULT TO PJ-CHR.
       *****************************************************************
-      *  Those routines handle files I/O
+      *  This routine should display variables (if any)
+      *****************************************************************
+       000-DISPV.
+           DISPLAY "200-DISPV".
+           DISPLAY "    PJ-CHR : " PJ-CHR.
+      *****************************************************************
+      *  This routine handle files opening
       *****************************************************************
        000-OFILE.
            OPEN INPUT FILEIN.
            OPEN OUTPUT FILEOUT1.
            OPEN OUTPUT FILEOUT2.
-       000-CFILE.
-           CLOSE FILEIN.
-           CLOSE FILEOUT1.
-           CLOSE FILEOUT2.
+       000-EXIT.
+           EXIT.
+      *****************************************************************
+      *  This routine put default value(s) to variable(s)
+      *****************************************************************
+       001-DEFVA.
+           MOVE PJ-CHR-DEFAULT TO PJ-CHR.
       *****************************************************************
       *  This routine should iterate over the file, line by line
       *****************************************************************
@@ -122,7 +131,7 @@
                WHEN PJ-CHR 
                   PERFORM 112-INCRT
                   PERFORM 114-OUTPUT1
-                  PERFORM 120-DISPL THRU 120-EXIT
+                  PERFORM 120-DISPL
                WHEN OTHER
                   PERFORM 113-INCRF
                   PERFORM 115-OUTPUT2
@@ -151,24 +160,24 @@
       *****************************************************************
        120-DISPL.
            DISPLAY STRUCT-FILEIN OF FILEIN.
-       120-EXIT.
-           EXIT.
-      *****************************************************************
-      *  This routine should display variables (if any)
-      *****************************************************************
-       200-DISPV.
-           DISPLAY "200-DISPV".
-           DISPLAY "    PJ-CHR : " PJ-CHR.
-       200-EXIT.
-           EXIT.
       *****************************************************************
       *  This routine should close the program (after some displays)
       *****************************************************************
-       300-EXITP.
-           DISPLAY "300-EXITP".
+       200-EXITP.
+           DISPLAY "200-EXITP".
            DISPLAY "    PJ-CHR   : " PJ-CHR.
            DISPLAY '    WS-FS-RL : ' WS-FS-RL.
            DISPLAY '    WS-FS-TL : ' WS-FS-TL.
            DISPLAY '    WS-FS-FL : ' WS-FS-FL.
-       300-EXIT.
+       200-EXIT.
            EXIT.
+      *****************************************************************
+      *  Those routines handle files Closing
+      *****************************************************************
+       999-CFILE.
+           CLOSE FILEIN.
+           CLOSE FILEOUT1.
+           CLOSE FILEOUT2.
+       999-EXIT.
+           EXIT.
+      *****************************************************************

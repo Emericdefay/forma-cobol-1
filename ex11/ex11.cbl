@@ -46,29 +46,24 @@
       *****************************************************************
        PROCEDURE DIVISION.
            PERFORM 000-PARAM THRU 000-EXIT.
-           PERFORM 001-FOPEN THRU 001-EXIT.
+      /    ALSO PERFORM : 
+      /    PERFORM 001-FOPEN.
            PERFORM 100-FILE  THRU 100-EXIT.
            PERFORM 200-DISPV THRU 200-EXIT.
            PERFORM 300-EXITP THRU 300-EXIT.
-           PERFORM 999-FREAD THRU 999-EXIT.
+           PERFORM 999-FCLOS THRU 999-EXIT.
            STOP RUN.
       *****************************************************************
       *  This routine should check if the seniority's of user is > 4 y
       *****************************************************************
        000-PARAM.
            CONTINUE.
-       000-EXIT.
-           EXIT.
       *****************************************************************
       *  This routine should check if the seniority's of user is > 4 y
       *****************************************************************
-       001-FOPEN.
+       000-FOPEN.
            OPEN INPUT SALARIES.
-       001-EXIT.
-           EXIT.
-       999-FREAD.
-           CLOSE SALARIES.
-       999-EXIT.
+       000-EXIT.
            EXIT.
       *****************************************************************
       *  This routine should check if the seniority's of user is > 4 y
@@ -110,4 +105,11 @@
        300-EXITP.
            DISPLAY "300-EXITP".
        300-EXIT.
+           EXIT.
+      *****************************************************************
+      *  This routine should close the program (after some displays)
+      *****************************************************************
+       999-FCLOS.
+           CLOSE SALARIES.
+       999-EXIT.
            EXIT.

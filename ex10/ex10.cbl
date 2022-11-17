@@ -130,7 +130,7 @@
                  WHEN WS-NOTE OF PRIMES-R-OLD (IO) = PJ-NOTE 
                     PERFORM 110-OLD
            END-SEARCH.
-           PERFORM 120-DISPL THRU 120-EXIT.
+           PERFORM 120-DISPL.
       *****************************************************************
       *  Check if it's an addition or a substraction
       *****************************************************************
@@ -154,7 +154,7 @@
                       (WS-NOTE OF PRIMES-R-YOUNG (IY) = PJ-NOTE)
                     PERFORM 111-YOUNG
            END-SEARCH.
-           PERFORM 120-DISPL THRU 120-EXIT.
+           PERFORM 120-DISPL.
       *****************************************************************
       * Check if it's an addition or a substraction 
       *****************************************************************
@@ -175,8 +175,6 @@
            DISPLAY '120-DISPL'.
            DISPLAY '    PRIME TO PAY : ' WS-PRIME-F.
            DISPLAY '    AUGMENTATION : ' WS-AUG.
-       120-EXIT.
-           EXIT.
       *****************************************************************
       *  This routine should display variables (if any)
       *****************************************************************

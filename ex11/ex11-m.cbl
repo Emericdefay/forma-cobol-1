@@ -75,40 +75,48 @@
            88 B0-1 VALUE 0 THRU 1. 
            88 B2-4 VALUE 2 THRU 4.
        01  LK-PRIME-F     PIC 9(07).
-
       *****************************************************************
        PROCEDURE DIVISION USING PJ-COUNTER,
                                 PJ-PRIME-I,
                                 PJ-NOTE,
                                 PJ-ANC,
                                 LK-PRIME-F. 
-           PERFORM 100-FILER.
-           MOVE WS-PRIME-F TO LK-PRIME-F.
+           PERFORM 000-SETUP THRU 000-EXIT.
+           PERFORM 100-FILER THRU 100-EXIT.
+           PERFORM 200-FILER THRU 200-EXIT.
+           PERFORM 300-DISPL THRU 300-EXIT.
            EXIT PROGRAM.
+      *****************************************************************
+      *  This routine should setup initiales variables
+      *****************************************************************
+       000-SETUP.
+           SET IO TO 1.
+           SET IY TO 1.
+       000-EXIT.
+           EXIT.
       *****************************************************************
       *  This routine should check if the seniority's of user is > 4 y
       *****************************************************************
        100-FILER.
-           SET IO TO 1.
-           SET IY TO 1.
            IF NOT (B0-1 OR B2-4)
                PERFORM 110-OLD-NOTE
            ELSE
-               PERFORM 111-YOUNG-ANC-NOTE
+               PERFORM 150-YOUNG-ANC-NOTE
            END-IF.
+       100-EXIT.
+           EXIT.
       *****************************************************************
       *  Check the note of the user and display prime to pay
       *****************************************************************
        110-OLD-NOTE.
            SEARCH WS-PRIME-ALL OF PRIMES-R-OLD
                  WHEN WS-NOTE OF PRIMES-R-OLD (IO) = PJ-NOTE 
-                    PERFORM 110-OLD
+                    PERFORM 111-OLD-OP
            END-SEARCH.
-           PERFORM 120-DISPL THRU 120-EXIT.
       *****************************************************************
       *  Check if it's an addition or a substraction
       *****************************************************************
-       110-OLD.
+       111-OLD-OP.
            IF WS-OPERATION OF PRIMES-R-OLD (IO) = WS-ADD-STR
                  MOVE WS-PRIME-DUE OF PRIMES-R-OLD (IO) TO WS-AUG
                  COMPUTE WS-PRIME-F = PJ-PRIME-I + 
@@ -121,17 +129,16 @@
       *****************************************************************
       *  Check the note and the seniority of the user and display prime
       *****************************************************************
-       111-YOUNG-ANC-NOTE.
+       150-YOUNG-ANC-NOTE.
            SEARCH WS-PRIME-ALL OF PRIMES-R-YOUNG
                  WHEN (WS-ANC OF PRIMES-R-YOUNG (IY) = PJ-ANC  ) AND
                       (WS-NOTE OF PRIMES-R-YOUNG (IY) = PJ-NOTE)
-                    PERFORM 111-YOUNG
+                    PERFORM 151-YOUNG
            END-SEARCH.
-           PERFORM 120-DISPL THRU 120-EXIT.
       *****************************************************************
       * Check if it's an addition or a substraction 
       *****************************************************************
-       111-YOUNG.
+       151-YOUNG.
            IF WS-OPERATION OF PRIMES-R-YOUNG (IY) = WS-ADD-STR
                  MOVE WS-PRIME-DUE OF PRIMES-R-YOUNG (IY) TO WS-AUG
                  COMPUTE WS-PRIME-F = PJ-PRIME-I + 
@@ -142,13 +149,20 @@
                          WS-PRIME-DUE OF PRIMES-R-YOUNG (IY)
            END-IF.
       *****************************************************************
+      *  This routine should return value WS-PRIME-F TO LK-PRIME-F
+      *****************************************************************
+       200-FILER.
+           MOVE WS-PRIME-F TO LK-PRIME-F.
+       200-EXIT.
+           EXIT.
+      *****************************************************************
       *  This routine should display the final prime.
       *****************************************************************
-       120-DISPL.
+       300-DISPL.
            DISPLAY 'ACCOUNT : '          PJ-COUNTER.
            DISPLAY '    PRIME INIT   : ' PJ-PRIME-I,
            DISPLAY '    NOTE         : ' PJ-NOTE,
            DISPLAY '    SENIORITY    : ' PJ-ANC,
            DISPLAY '    PRIME FINAL  : ' LK-PRIME-F. 
-       120-EXIT.
+       300-EXIT.
            EXIT.
