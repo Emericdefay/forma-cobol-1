@@ -50,7 +50,7 @@
            DISPLAY '*========='       '=========*'.
            EXIT PROGRAM.
       *****************************************************************
-      *  This routine should 
+      *  This routine select the routine to launch according to MNT-X
       *****************************************************************
        100-CALL.
            DISPLAY '  MNT-X : ' MNT-X.
@@ -65,7 +65,7 @@
        100-EXIT. 
            EXIT.
       *****************************************************************
-      *  Those routines MOVE MNT-X to MNT-*
+      *  Those routines MOVE MNT-X to MNT-* (*: A|B|C|D|E|F)
       *****************************************************************
        101-MVTOA.
            MOVE MNT-X TO MNT-A.

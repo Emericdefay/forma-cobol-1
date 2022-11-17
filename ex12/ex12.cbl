@@ -22,9 +22,6 @@
        FILE-CONTROL. 
            SELECT COMBINATIONS
            ASSIGN TO FILEIN
-      *    ORGANIZATION IS INDEXED
-      *    ACCESS MODE IS SEQUENTIAL
-      *    RECORD KEY IS data-name-1
            FILE STATUS IS FC-FS-COM.
       *****************************************************************
        DATA DIVISION. 
@@ -40,7 +37,7 @@
        01 WS-COUNTER  PIC 9(02).
        01 FC-FS-COM   PIC X(02).
            88 FS-COM-END VALUE '10'.
-       01 WS-CALL-PGM PIC X(08) VALUE "PGM012M1".
+       01 WS-CALL-PGM PIC X(08) VALUE "PGM012M".
       *****************************************************************
        PROCEDURE DIVISION.
            PERFORM 000-RFILE THRU 000-EXIT.
@@ -48,7 +45,7 @@
            PERFORM 999-CFILE THRU 999-EXIT.
            STOP RUN.
       *****************************************************************
-      *  This routine should 
+      *  Those routines should manage files IO
       *****************************************************************
        000-RFILE.
            OPEN INPUT COMBINATIONS.
@@ -60,7 +57,7 @@
        999-EXIT. 
            EXIT.
       *****************************************************************
-      *  This routine should 
+      *  This routine should read file, line by line until the end
       *****************************************************************
        100-READF.
            PERFORM VARYING WS-COUNTER FROM 1 BY 1
@@ -73,7 +70,7 @@
        100-EXIT. 
            EXIT.
       *****************************************************************
-      *  Those routines MOVE MNT-X to MNT-*
+      *  This routine should call WS-CALL-PGM with parameters.
       *****************************************************************
        101-CALL.
            CALL WS-CALL-PGM USING BY CONTENT CAS,
