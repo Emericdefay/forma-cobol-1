@@ -8,6 +8,7 @@
       * --------- -------- --------------------------------------- 
       * 15/11/22  IBMUSER  Using file FILEIN : i.e. ibmuser.files(set1)      
       * 15/11/22  IBMUSER  Using parm SYSIN  : i.e. f      
+      * 16/11/22  IBMUSER  Adding FILEOUTs   : To write data inside      
       *                                                               
       *****************************************************************
        IDENTIFICATION DIVISION.
@@ -21,17 +22,38 @@
        ENVIRONMENT DIVISION. 
        INPUT-OUTPUT SECTION. 
        FILE-CONTROL.
-      * FILE TO CHECK 
-           SELECT NOMFIC
+      /    FILEIN
+           SELECT FILEIN
            ASSIGN TO FILEIN
-      *    ORGANIZATION is SEQUENTIAL.
-      *    ACCESS MODE is SEQUENTIAL
-      *    RECORD KEY is WS-FS-KEY
            FILE STATUS is WS-FS-STATUS.
+      /    FILEOUT1
+           SELECT FILEOUT1
+           ASSIGN TO FILEOUT1.
+      /    FILEOUT2
+           SELECT FILEOUT2
+           ASSIGN TO FILEOUT2.
        DATA DIVISION.
        FILE SECTION. 
-       FD NOMFIC.
-       01  STRUCT-FICHIER.
+       FD FILEIN.
+       01  STRUCT-FILEIN.
+           02 F-COMPTE   PIC 9(06).
+           02 F-NOM      PIC X(15).
+           02 F-SOLDER   PIC 9(07).
+           02 F-DT-MVT   PIC X(10).
+           02 F-ETAT     PIC X(01).
+           02 F-DEPT     PIC 9(02).
+           02 F-LIBRE    PIC X(39).
+       FD FILEOUT1.
+       01  STRUCT-FILEOUT1.
+           02 F-COMPTE   PIC 9(06).
+           02 F-NOM      PIC X(15).
+           02 F-SOLDER   PIC 9(07).
+           02 F-DT-MVT   PIC X(10).
+           02 F-ETAT     PIC X(01).
+           02 F-DEPT     PIC 9(02).
+           02 F-LIBRE    PIC X(39).
+       FD FILEOUT2.
+       01  STRUCT-FILEOUT2.
            02 F-COMPTE   PIC 9(06).
            02 F-NOM      PIC X(15).
            02 F-SOLDER   PIC 9(07).
@@ -57,7 +79,7 @@
            PERFORM 100-FILER THRU 100-EXIT.
            PERFORM 300-EXITP THRU 300-EXIT.
            PERFORM 000-CFILE.
-           GOBACK.
+           STOP RUN.
       *****************************************************************
       *  This routine handle parameters
       *****************************************************************
@@ -72,15 +94,19 @@
       *  Those routines handle files I/O
       *****************************************************************
        000-OFILE.
-           OPEN INPUT NOMFIC.
+           OPEN INPUT FILEIN.
+           OPEN OUTPUT FILEOUT1.
+           OPEN OUTPUT FILEOUT2.
        000-CFILE.
-           CLOSE NOMFIC.
+           CLOSE FILEIN.
+           CLOSE FILEOUT1.
+           CLOSE FILEOUT2.
       *****************************************************************
       *  This routine should iterate over the file, line by line
       *****************************************************************
        100-FILER.
            PERFORM UNTIL F-END-READ
-              READ NOMFIC
+              READ FILEIN
                  NOT AT END
                     PERFORM 110-CHECK
               END-READ
@@ -92,28 +118,39 @@
       *****************************************************************
        110-CHECK.
            PERFORM 111-INCRR
-           EVALUATE F-ETAT
+           EVALUATE F-ETAT OF FILEIN 
                WHEN PJ-CHR 
                   PERFORM 112-INCRT
+                  PERFORM 114-OUTPUT1
                   PERFORM 120-DISPL THRU 120-EXIT
                WHEN OTHER
                   PERFORM 113-INCRF
+                  PERFORM 115-OUTPUT2
                   CONTINUE
            END-EVALUATE.
       *****************************************************************
       *  Incrementation methods
       *****************************************************************
-       111-INCRR .
+       111-INCRR.
            COMPUTE WS-FS-RL = WS-FS-RL + 1.
-       112-INCRT .
+       112-INCRT.
            COMPUTE WS-FS-TL = WS-FS-TL + 1.
-       113-INCRF .
+       113-INCRF.
            COMPUTE WS-FS-FL = WS-FS-FL + 1.
+      *****************************************************************
+      *  Output methods
+      *****************************************************************
+       114-OUTPUT1.
+           MOVE STRUCT-FILEIN TO STRUCT-FILEOUT1.
+           WRITE STRUCT-FILEOUT1.
+       115-OUTPUT2.
+           MOVE STRUCT-FILEIN TO STRUCT-FILEOUT2.
+           WRITE STRUCT-FILEOUT2.
       *****************************************************************
       *  This routine should display a line of the file.
       *****************************************************************
        120-DISPL.
-           DISPLAY STRUCT-FICHIER.
+           DISPLAY STRUCT-FILEIN OF FILEIN.
        120-EXIT.
            EXIT.
       *****************************************************************
