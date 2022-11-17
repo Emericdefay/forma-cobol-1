@@ -21,5 +21,5 @@
 </p>
 
 <p align="center">
-  <img src="../exercice.png" alt="COBOL exercice">
+  <img src="./exercice.png" alt="COBOL exercice">
 </p>
