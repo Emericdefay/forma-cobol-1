@@ -55,6 +55,15 @@ Your Loadlib section shoul be a specific PDS.
 // DSNTYPE=LIBRARY                               
 ```
 
+### Be Aware
+
+For cobol program, be sure to give the file name into PROGRAM-ID.
+
+My setup is the following:  
+- IBMUSER.PROG.CBL  : My cobol folder, including compiler and executer.
+- IBMUSER.PROG.LOAD : My cobol loadlib, see above for specifications.
+- IBMUSER.FILES     : My folder dedicated for files read in executions.
+
 ### Installing
 
 You can transfer, copy/paste the files but it's recommanded to just check them.
@@ -62,9 +71,9 @@ You can transfer, copy/paste the files but it's recommanded to just check them.
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
-- [Z/OS](https://expressjs.com/) - Server Framework
-- [JCL](https://vuejs.org/) - Web Framework
-- [Cobol](https://nodejs.org/en/) - Server Environment
+- [Z/OS](https://www.ibm.com/fr-fr) - IBM Z/OS
+- [JCL](https://www-40.ibm.com/servers/resourcelink/svc00100.nsf/pages/zOSV2R3SA231386/$file/ieab500_v2r3.pdf) - JCL language
+- [Cobol](https://www.ibm.com/docs/en/SS6SG3_4.2.0/com.ibm.entcobol.doc_4.2/PGandLR/igy3pg50.pdf) - COBOL language
 
 ## ✍️ Authors <a name = "authors"></a>
 
