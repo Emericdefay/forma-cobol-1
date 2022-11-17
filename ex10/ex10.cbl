@@ -66,11 +66,18 @@
       / WS variables 
        01  WS-AUG         PIC 9(07).
        01  WS-PRIME-F     PIC 9(07).
+       01  WS-ADD-SYMB    PIC X(01) VALUE 'A'.
 
       / Parameter from JCL run 
        01  PJ-PRIME-I     PIC 9(07).
+           88 PRIME-I-LV   VALUE LOW-VALUE.
+           88 PRIME-I-SP   VALUE SPACE.
        01  PJ-NOTE        PIC X(01).
+           88 NOTE-LV   VALUE LOW-VALUE.
+           88 NOTE-SP   VALUE SPACE.
        01  PJ-ANC         PIC 9(07).
+           88 ANC-LV   VALUE LOW-VALUE.
+           88 ANC-SP   VALUE SPACE.
            88 B0-1 VALUE 0 THRU 1. 
            88 B2-4 VALUE 2 THRU 4.
 
@@ -81,7 +88,9 @@
 
       *****************************************************************
        PROCEDURE DIVISION.
-           PERFORM 000-PARMS.
+           PERFORM 000-PARMS THRU 000-EXIT.
+      /    PERFORM ALSO:
+      /    PERFORM 000-SETUP. 
            PERFORM 100-FILER THRU 100-EXIT.
            PERFORM 200-DISPV THRU 200-EXIT.
            PERFORM 300-EXITP THRU 300-EXIT.
@@ -93,15 +102,23 @@
            ACCEPT PJ-PRIME-I.
            ACCEPT PJ-NOTE.
            ACCEPT PJ-ANC.
-           IF PJ-PRIME-I = SPACE OR LOW-VALUE THEN
+           IF PRIME-I-LV OR PRIME-I-SP THEN
               PERFORM 001-DEFVA
            END-IF.
-           IF PJ-NOTE    = SPACE OR LOW-VALUE THEN
+           IF NOTE-LV    OR NOTE-SP    THEN
               PERFORM 002-DEFVA
            END-IF.
-           IF PJ-ANC     = SPACE OR LOW-VALUE THEN
+           IF ANC-LV     OR ANC-SP     THEN
               PERFORM 003-DEFVA
            END-IF.
+       000-SETUP.
+           SET IO TO 1.
+           SET IY TO 1.
+       000-EXIT.
+           EXIT.
+      *****************************************************************
+      *  Those routines handle parameters default values if none provd.
+      *****************************************************************
        001-DEFVA.
            MOVE PJ-PRIME-I-DEF TO PJ-PRIME-I.
        002-DEFVA.
@@ -112,8 +129,6 @@
       *  This routine should check if the seniority's of user is > 4 y
       *****************************************************************
        100-FILER.
-           SET IO TO 1.
-           SET IY TO 1.
            IF NOT (B0-1 OR B2-4)
                PERFORM 110-OLD-NOTE
            ELSE
@@ -135,7 +150,7 @@
       *  Check if it's an addition or a substraction
       *****************************************************************
        110-OLD.
-           IF WS-OPERATION OF PRIMES-R-OLD (IO) = 'A'
+           IF WS-OPERATION OF PRIMES-R-OLD (IO) = WS-ADD-SYMB
                  MOVE WS-PRIME-DUE OF PRIMES-R-OLD (IO) TO WS-AUG
                  COMPUTE WS-PRIME-F = PJ-PRIME-I + 
                          WS-PRIME-DUE OF PRIMES-R-OLD (IO)
@@ -159,7 +174,7 @@
       * Check if it's an addition or a substraction 
       *****************************************************************
        111-YOUNG.
-           IF WS-OPERATION OF PRIMES-R-YOUNG (IY) = 'A'
+           IF WS-OPERATION OF PRIMES-R-YOUNG (IY) = WS-ADD-SYMB
                  MOVE WS-PRIME-DUE OF PRIMES-R-YOUNG (IY) TO WS-AUG
                  COMPUTE WS-PRIME-F = PJ-PRIME-I + 
                          WS-PRIME-DUE OF PRIMES-R-YOUNG (IY)
