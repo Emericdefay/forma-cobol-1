@@ -3,6 +3,11 @@
       *
       * Original author: DEFAY E.           
       *
+      * Purpose : Comparing 2 files (A & B)
+      *          If 2 lines are equal -> print   on file 1
+      *          If 2 lines are diff  -> print A on file 2
+      *                               && print B on file 3
+      *
       * Using :
       *    - Copybooks PGM014FC & PGM014FS                    
       *    - Files (examples) FILE0141 & FILES0142                  
@@ -20,6 +25,7 @@
        DATE-WRITTEN.  21/11/22. 
        DATE-COMPILED. 21/11/22. 
        SECURITY.      NON-CONFIDENTIAL.
+
       *****************************************************************
        ENVIRONMENT DIVISION. 
        CONFIGURATION SECTION.
@@ -39,9 +45,9 @@
        COPY PGM014FC REPLACING ==()== BY ==FILEOUT2==.
       / FILEOUT3
        COPY PGM014FC REPLACING ==()== BY ==FILEOUT3==.
+
       *****************************************************************
        DATA DIVISION. 
-      *****************************************************************
        FILE SECTION.
       **COPYBOOK : PGM014FS
       *FD ()  
@@ -61,6 +67,7 @@
        COPY PGM014FS REPLACING ==()== BY ==FILEOUT2==.
       / FILEOUT3
        COPY PGM014FS REPLACING ==()== BY ==FILEOUT3==.
+
       *****************************************************************
        WORKING-STORAGE SECTION.
       / FILES STATUS
@@ -71,6 +78,7 @@
        01 FS-FILEOUT1    PIC X(2).
        01 FS-FILEOUT2    PIC X(2).
        01 FS-FILEOUT3    PIC X(2).
+
       *****************************************************************
       *  Program : Setup, run main routine and exit.
       *****************************************************************
@@ -82,8 +90,9 @@
            PERFORM 100-FILES THRU 100-EXIT.
            PERFORM 999-FCLOS THRU 999-EXIT.
            GOBACK.
-      /                                                               /
-      /////////////////////////////////////////////////////////////////
+      *                                                               *
+      *****************************************************************
+
       *****************************************************************
       *  Routine 0 : Setting up the program with Params & Files.
       *****************************************************************
@@ -91,6 +100,7 @@
       *  This routine should setup params (if any)
        000-PARAM.
            CONTINUE.
+      *                                                               *
       *****************************************************************
       *  Those routines should manage file opening (if any)
        001-IOPEN.
@@ -102,7 +112,7 @@
                        FILEOUT3.
        000-EXIT.
            EXIT.
-      *
+      *                                                               *
       *****************************************************************
       *  This routine should manage file reading
        010-READ.
@@ -110,6 +120,7 @@
            READ FILEIN2.
       *                                                               *
       *****************************************************************
+
       *****************************************************************
       *  Routine 1 : Read, compare 2 files and write in 3 other files.
       *****************************************************************
@@ -125,7 +136,6 @@
            EXIT.
       *                                                               *
       *****************************************************************
-      *****************************************************************
       *                                                               *
        101-COMPARE.
            EVALUATE TRUE
@@ -136,6 +146,7 @@
                WHEN     FS-FC-F1 OR  NOT FS-FC-F2
                   PERFORM 112-MOVE2OUT3-AFTER
            END-EVALUATE.
+      *                                                               *    
       *****************************************************************
       *  This routine should compare if line from f1 & f2 are the same
        102-COMPARE1TO2.
@@ -146,6 +157,7 @@
                  PERFORM 123-MOVE1OUT2
                  PERFORM 124-MOVE2OUT3
            END-EVALUATE.
+      *                                                               *    
       *****************************************************************
       *  This routine should finish read FILEIN1 until its end.
        111-MOVE1OUT2-AFTER.
@@ -153,6 +165,7 @@
               PERFORM 123-MOVE1OUT2
               PERFORM 010-READ
            END-PERFORM.
+      *                                                               *    
       *****************************************************************
       *  This routine should finish read FILEIN2 until its end.
        112-MOVE2OUT3-AFTER.
@@ -160,20 +173,24 @@
               PERFORM 124-MOVE2OUT3
               PERFORM 010-READ
            END-PERFORM.
+      *                                                               *    
       *****************************************************************
       *  This routine should write data from FILEIN1 to file FILEOUT1
        122-MOVE12OUT1.
            WRITE FILEOUT1-ENREG FROM FILEIN1-ENREG.
+      *                                                               *    
       *****************************************************************
       *  This routine should write data from FILEIN1 to file FILEOUT2
        123-MOVE1OUT2.
            WRITE FILEOUT2-ENREG FROM FILEIN1-ENREG.
+      *                                                               *    
       *****************************************************************
       *  This routine should write data from FILEIN2 to file FILEOUT3
        124-MOVE2OUT3.
            WRITE FILEOUT3-ENREG FROM FILEIN2-ENREG.
       *                                                               *
       *****************************************************************
+
       *****************************************************************
       *  Routine 2 : Close files before closing the program.
       *****************************************************************
