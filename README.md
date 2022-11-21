@@ -55,7 +55,7 @@ Your Loadlib section shoul be a specific PDS.
 // DSNTYPE=LIBRARY                               
 ```
 
-### Be Aware
+### Be Aware <a name = "settings"></a>
 
 For cobol program, be sure to give the file name into PROGRAM-ID.
 

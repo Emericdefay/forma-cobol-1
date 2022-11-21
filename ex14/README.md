@@ -3,7 +3,7 @@
  <img width=200px height=200px src="https://www.krescentglobal.com/images/iphone/cobol-1.png" alt="COBOL LOGO"></a>
 </p>
 
-<h3 align="center">COBOL POE - Part 1</h3>
+<h3 align="center">COBOL POE - Part 1.2</h3>
 
 <div align="center">
 
@@ -16,17 +16,16 @@
 
 ---
 
-PGM014(FC/FS) are copybooks.  
-File014(1/2) are source files (inputs).  
-Be sure to verify JCL to make sure that work on you zOS.  
+# Notes:
 
-<p align="center"> Exercice 12
-    <br> 
-</p>
+``PGM014FC`` & ``PGM014FS`` are copybooks.  
+``File0141`` & ``File0142`` are input files. (*just examples*)  
+``jcl-compilation`.jcl`` & ``jcl-execution`.jcl`` are JCL code. 
+Be sure to verify the **JCL** to make sure that it works on your zOS.  
+I explain my setup here : [settings](../README.md/#settings)
 
 
-<p align="center">
-Formation COBOL -  Appareillage de fichiers
+# Formation COBOL -  Appareillage de fichiers
 
 ## 1.	Objectif de la fiche :  
 
@@ -50,30 +49,34 @@ Les 5 fichiers ont la même structure CENTREE.    (à créer dans IBMUSER.COB.CO
 
 ## 3.	Algorithme proposé :
 
-Procédure APPAREILLAGE
 ```algo
-               Début
-                            Initialisation des compteurs de lecture et d’écriture
-                            Ouverture des 5 fichiers 
-                            Lecture du premier enregistrement FENTREE1
-Lecture du premier enregistrement FENTREE2
-                            Faire jusqu’à la fin du fichier FENTREE1 et fin du fichier FENTREE2
-                                      Si FENTREE1.COMPTE = FENTREE2.COMPTE 
-			       Ecrire l’un des enregistrements dans FSORTIE1
-		                     Lecture du premier enregistrement FENTREE1
-		                     Lecture du premier enregistrement FENTREE2
-			  FinSi
-                                      Si FENTREE1.COMPTE > FENTREE2.COMPTE ou Fin Fichier FENTREE1
-			       Ecrire l’enregistrement FENTREE1 dans FSORTIE2
-		                     Lecture du premier enregistrement FENTREE2
-			  FinSi
+Procédure APPAREILLAGE
+  Début
+    Initialisation des compteurs delecture et d’écriture
+    Ouverture des 5 fichiers 
+    Lecture du premier enregistrementFENTREE1
+    Lecture du premier enregistrementFENTREE2
 
-                                      Si FENTREE1.COMPTE <FENTREE2.COMPTE ou Fin Fichier FENTREE1
-			              Ecrire l’enregistrement FENTREE2 dans FSORTIE3
-		                            Lecture du premier enregistrement FENTREE1
-			  FinSi
-                             FinFaire
-                Fin
+    Faire jusqu’à la fin du fichierFENTREE1 et fin du fichier FENTREE2
+
+      Si FENTREE1.COMPTE = FENTREE2.COMPTE 
+        Ecrire l’un des enregistrements dans FSORTIE1
+        Lecture du premier enregistrement FENTREE1
+        Lecture du premier enregistrement FENTREE2
+      FinSi
+
+      Si FENTREE1.COMPTE > FENTREE2.COMPTE ou Fin Fichier FENTREE1
+        Ecrire l’enregistrement FENTREE1 dans FSORTIE2
+        Lecture du premier enregistrement FENTREE2
+      FinSi
+
+      Si FENTREE1.COMPTE <FENTREE2.COMPTE ou Fin Fichier FENTREE1
+        Ecrire l’enregistrement FENTREE2 dans FSORTIE3
+        Lecture du premier enregistrement FENTREE1
+      FinSi
+
+    FinFaire
+  Fin
 Fin Procédure
 ```
 ## 4.	Etapes à suivre pour l’écriture du programme
