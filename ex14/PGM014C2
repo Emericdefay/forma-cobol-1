@@ -1,0 +1,3 @@
+           SELECT FILE()
+           ASSIGN TO FILE()
+           FILE STATUS IS FS-FILE().
