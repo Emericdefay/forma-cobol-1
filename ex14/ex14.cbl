@@ -81,8 +81,9 @@
       *****************************************************************
        PROCEDURE DIVISION.
            PERFORM 000-PARAM THRU 000-EXIT.
-      /    ALSO PERFORM : 
-      /    PERFORM 001-FOPEN.
+      /    PERFORM : 
+      /            001-IOPEN.
+      /            002-OOPEN.
            PERFORM 100-FILES THRU 100-EXIT.
            PERFORM 999-FCLOS THRU 999-EXIT.
            GOBACK.
@@ -95,10 +96,11 @@
        000-PARAM.
            CONTINUE.
       *****************************************************************
-      *  This routine should manage file opening (if any)
-       001-FOPEN.
+      *  Those routines should manage file opening (if any)
+       001-IOPEN.
            OPEN INPUT  FILEIN1,
                        FILEIN2.
+       002-OOPEN.
            OPEN OUTPUT FILEOUT1,
                        FILEOUT2,
                        FILEOUT3.
@@ -149,15 +151,15 @@
       *  This routine should check which file is not finished.
        110-WHICH-END.
            IF NOT (FS-FC-F1 AND FS-FC-F2)
-              IF FS-FC-F1
-                 PERFORM 111-MOVE2OUT3-AFTER
+              IF FS-FC-F2
+                 PERFORM 111-MOVE1OUT2-AFTER
               ELSE
-                 PERFORM 112-MOVE1OUT2-AFTER
+                 PERFORM 112-MOVE2OUT3-AFTER
               END-IF
            END-IF.
       *****************************************************************
       *  This routine should finish read FILEIN1 until its end.
-       112-MOVE1OUT2-AFTER.
+       111-MOVE1OUT2-AFTER.
            PERFORM VARYING COUNTER-2 FROM 1 BY 1
               UNTIL FS-FC-F1
                  READ FILEIN1
@@ -169,7 +171,7 @@
            END-PERFORM.
       *****************************************************************
       *  This routine should finish read FILEIN2 until its end.
-       111-MOVE2OUT3-AFTER.
+       112-MOVE2OUT3-AFTER.
            PERFORM VARYING COUNTER-2 FROM 1 BY 1
               UNTIL FS-FC-F2
                  READ FILEIN2
