@@ -22,15 +22,13 @@
        SECURITY.      NON-CONFIDENTIAL.
       *****************************************************************
        ENVIRONMENT DIVISION. 
-       CONFIGURATION SECTION. 
-       SOURCE-COMPUTER. IBM-3081. 
-       OBJECT-COMPUTER. IBM-3081. 
+       CONFIGURATION SECTION.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL. 
       **COPYBOOK : PGM014FC
-      *    SELECT file-name FILE()
-      *    ASSIGN to FILE()
-      *    FILE STATUS is FS-FILE().
+      *    SELECT file-name ()
+      *    ASSIGN to ()
+      *    FILE STATUS is FS-().
       * FILEIN1
        COPY PGM014FC REPLACING ==()== BY ==FILEIN1==.
       / FILEIN2
@@ -65,9 +63,6 @@
        COPY PGM014FS REPLACING ==()== BY ==FILEOUT3==.
       *****************************************************************
        WORKING-STORAGE SECTION.
-      / COUNTERS
-       01 WS-COUNTER     PIC 9(10).
-       01 COUNTER-2      PIC 9(10).
       / FILES STATUS
        01 FS-FILEIN1     PIC X(2).
            88 FS-FC-F1    VALUE '10'.
@@ -87,7 +82,8 @@
            PERFORM 100-FILES THRU 100-EXIT.
            PERFORM 999-FCLOS THRU 999-EXIT.
            GOBACK.
-
+      /                                                               /
+      /////////////////////////////////////////////////////////////////
       *****************************************************************
       *  Routine 0 : Setting up the program with Params & Files.
       *****************************************************************
@@ -106,82 +102,78 @@
                        FILEOUT3.
        000-EXIT.
            EXIT.
-
+      *
+      *****************************************************************
+      *  This routine should manage file reading
+       010-READ.
+           READ FILEIN1.
+           READ FILEIN2.
+      *                                                               *
+      *****************************************************************
       *****************************************************************
       *  Routine 1 : Read, compare 2 files and write in 3 other files.
       *****************************************************************
       *****************************************************************
       *  This routine should read files 1 & 2 until one is finish (LbL)
        100-FILES.
-           PERFORM 
-              VARYING WS-COUNTER FROM 1 BY 1
-              UNTIL (FS-FC-F1 OR FS-FC-F2)
-                 READ FILEIN1 
-                 READ FILEIN2
-                 AT END     PERFORM 110-WHICH-END
-                 NOT AT END PERFORM 101-COMPARE1TO2
-              END-READ
+           PERFORM UNTIL (FS-FC-F1 OR FS-FC-F2)
+                PERFORM 010-READ
+                PERFORM 101-COMPARE
            END-PERFORM.
 
        100-EXIT.
            EXIT.
+      *                                                               *
       *****************************************************************
-      *  This routine should compare if line from f1 & f2 are the same
-       101-COMPARE1TO2.
-           EVALUATE FILEIN1-ENREG
-              WHEN FILEIN2-ENREG
-                 PERFORM 102-MOVE12OUT1
-              WHEN OTHER
-                 PERFORM 103-MOVE1OUT2
-                 PERFORM 104-MOVE2OUT3
+      *****************************************************************
+      *                                                               *
+       101-COMPARE.
+           EVALUATE TRUE
+               WHEN NOT (FS-FC-F1 OR FS-FC-F2)
+                  PERFORM 102-COMPARE1TO2
+               WHEN NOT FS-FC-F1 AND     FS-FC-F2
+                  PERFORM 111-MOVE1OUT2-AFTER
+               WHEN     FS-FC-F1 OR  NOT FS-FC-F2
+                  PERFORM 112-MOVE2OUT3-AFTER
            END-EVALUATE.
       *****************************************************************
-      *  This routine should write data from FILEIN1 to file FILEOUT1
-       102-MOVE12OUT1.
-           WRITE FILEOUT1-ENREG FROM FILEIN1-ENREG.
-      *****************************************************************
-      *  This routine should write data from FILEIN1 to file FILEOUT2
-       103-MOVE1OUT2.
-           WRITE FILEOUT2-ENREG FROM FILEIN1-ENREG.
-      *****************************************************************
-      *  This routine should write data from FILEIN2 to file FILEOUT3
-       104-MOVE2OUT3.
-           WRITE FILEOUT3-ENREG FROM FILEIN2-ENREG.
-      *****************************************************************
-      *  This routine should check which file is not finished.
-       110-WHICH-END.
-           IF NOT (FS-FC-F1 AND FS-FC-F2)
-              IF FS-FC-F2
-                 PERFORM 111-MOVE1OUT2-AFTER
-              ELSE
-                 PERFORM 112-MOVE2OUT3-AFTER
-              END-IF
-           END-IF.
+      *  This routine should compare if line from f1 & f2 are the same
+       102-COMPARE1TO2.
+           EVALUATE FILEIN1-ENREG
+              WHEN  FILEIN2-ENREG
+                 PERFORM 122-MOVE12OUT1
+              WHEN OTHER
+                 PERFORM 123-MOVE1OUT2
+                 PERFORM 124-MOVE2OUT3
+           END-EVALUATE.
       *****************************************************************
       *  This routine should finish read FILEIN1 until its end.
        111-MOVE1OUT2-AFTER.
-           PERFORM VARYING COUNTER-2 FROM 1 BY 1
-              UNTIL FS-FC-F1
-                 READ FILEIN1
-                 NOT AT END
-                    IF COUNTER-2 > WS-COUNTER
-                       PERFORM 103-MOVE1OUT2
-                    END-IF
-              END-READ
+           PERFORM UNTIL FS-FC-F1
+              PERFORM 123-MOVE1OUT2
+              PERFORM 000-READ
            END-PERFORM.
       *****************************************************************
       *  This routine should finish read FILEIN2 until its end.
        112-MOVE2OUT3-AFTER.
-           PERFORM VARYING COUNTER-2 FROM 1 BY 1
-              UNTIL FS-FC-F2
-                 READ FILEIN2
-                 NOT AT END
-                    IF COUNTER-2 > WS-COUNTER
-                       PERFORM 104-MOVE2OUT3
-                    END-IF
-              END-READ
+           PERFORM UNTIL FS-FC-F2
+              PERFORM 124-MOVE2OUT3
+              PERFORM 000-READ
            END-PERFORM.
-
+      *****************************************************************
+      *  This routine should write data from FILEIN1 to file FILEOUT1
+       122-MOVE12OUT1.
+           WRITE FILEOUT1-ENREG FROM FILEIN1-ENREG.
+      *****************************************************************
+      *  This routine should write data from FILEIN1 to file FILEOUT2
+       123-MOVE1OUT2.
+           WRITE FILEOUT2-ENREG FROM FILEIN1-ENREG.
+      *****************************************************************
+      *  This routine should write data from FILEIN2 to file FILEOUT3
+       124-MOVE2OUT3.
+           WRITE FILEOUT3-ENREG FROM FILEIN2-ENREG.
+      *                                                               *
+      *****************************************************************
       *****************************************************************
       *  Routine 2 : Close files before closing the program.
       *****************************************************************
