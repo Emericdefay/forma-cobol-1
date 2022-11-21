@@ -20,7 +20,7 @@
 
 ``PGM014FC`` & ``PGM014FS`` are copybooks.  
 ``File0141`` & ``File0142`` are input files. (*just examples*)  
-``jcl-compilation`.jcl`` & ``jcl-execution`.jcl`` are JCL code. 
+``jcl-compilation`.jcl`` & ``jcl-execution`.jcl`` are JCL code.   
 Be sure to verify the **JCL** to make sure that it works on your zOS.  
 I explain my setup here : [settings](../README.md/#settings)
 
