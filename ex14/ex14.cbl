@@ -151,14 +151,14 @@
        111-MOVE1OUT2-AFTER.
            PERFORM UNTIL FS-FC-F1
               PERFORM 123-MOVE1OUT2
-              PERFORM 000-READ
+              PERFORM 010-READ
            END-PERFORM.
       *****************************************************************
       *  This routine should finish read FILEIN2 until its end.
        112-MOVE2OUT3-AFTER.
            PERFORM UNTIL FS-FC-F2
               PERFORM 124-MOVE2OUT3
-              PERFORM 000-READ
+              PERFORM 010-READ
            END-PERFORM.
       *****************************************************************
       *  This routine should write data from FILEIN1 to file FILEOUT1
