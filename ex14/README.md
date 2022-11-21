@@ -16,8 +16,8 @@
 
 ---
 
-PGM014C1/2 are copybooks.  
-Files (file0141/2) are source files (inputs)  
+PGM014(FC/FS) are copybooks.  
+File014(1/2) are source files (inputs).  
 Be sure to verify JCL to make sure that work on you zOS.  
 
 <p align="center"> Exercice 12
