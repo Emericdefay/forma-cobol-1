@@ -20,10 +20,10 @@
       *****************************************************************
        IDENTIFICATION DIVISION.
        PROGRAM-ID.    PGM014.
-       AUTHOR.        DEFAY E. 
-       INSTALLATION.  COBOL DEVELOPMENT CENTER. 
-       DATE-WRITTEN.  21/11/22. 
-       DATE-COMPILED. 21/11/22. 
+       AUTHOR.        DEFAY E.
+       INSTALLATION.  COBOL DEVELOPMENT CENTER.
+       DATE-WRITTEN.  21/11/22.
+       DATE-COMPILED. 21/11/22.
        SECURITY.      NON-CONFIDENTIAL.
 
       *****************************************************************
@@ -71,73 +71,87 @@
       *****************************************************************
        WORKING-STORAGE SECTION.
       / FILES STATUS
-       01 FS-FILEIN1     PIC X(2).
-           88 FS-FC-F1    VALUE '10'.
-       01 FS-FILEIN2     PIC X(2).
-           88 FS-FC-F2    VALUE '10'.
-       01 FS-FILEOUT1    PIC X(2).
-       01 FS-FILEOUT2    PIC X(2).
-       01 FS-FILEOUT3    PIC X(2).
+       01 FILEIN-STATUS.
+           05 FS-FILEIN1     PIC X(2).
+               88 FS-FC-F1     VALUE '10'.
+           05 FS-FILEIN2     PIC X(2).
+               88 FS-FC-F2     VALUE '10'.
+       01 FILEOUT-UNUSED-STATUS.
+           05 FS-FILEOUT1    PIC X(2).
+           05 FS-FILEOUT2    PIC X(2).
+           05 FS-FILEOUT3    PIC X(2).
 
       *****************************************************************
       *  Program : Setup, run main routine and exit.
+      *    
+      *    Main purpose
+      *    - 0xx : Input/Output section
+      *    - 1xx : Compare files
+      *    - 9xx : Close files
+      *
+      *    Input/Output managment
+      *    - x1x : Perform a READ
+      *    - x2x : Perform a WRITE
+      *
+      *    Specials
+      *    - xxx : OTHERS
       *****************************************************************
        PROCEDURE DIVISION.
-           PERFORM 000-PARAM THRU 000-EXIT.
-      /    PERFORM : 
-      /            001-IOPEN.
-      /            002-OOPEN.
-           PERFORM 100-FILES THRU 100-EXIT.
-           PERFORM 999-FCLOS THRU 999-EXIT.
-           GOBACK.
+           PERFORM 000-PARAM
+           PERFORM 001-IOPEN
+           PERFORM 002-OOPEN
+           PERFORM 100-FILES
+           PERFORM 999-FCLOS
+           GOBACK
+           .
       *                                                               *
       *****************************************************************
 
       *****************************************************************
       *  Routine 0 : Setting up the program with Params & Files.
       *****************************************************************
+
+       000-PARAM.
       *****************************************************************
       *  This routine should setup params (if any)
-       000-PARAM.
-           CONTINUE.
-      *                                                               *
+           CONTINUE
+           .
+
       *****************************************************************
       *  Those routines should manage file opening (if any)
        001-IOPEN.
            OPEN INPUT  FILEIN1,
-                       FILEIN2.
+                       FILEIN2
+           .
        002-OOPEN.
            OPEN OUTPUT FILEOUT1,
                        FILEOUT2,
-                       FILEOUT3.
-       000-EXIT.
-           EXIT.
-      *                                                               *
+                       FILEOUT3
+           .
+
+       010-READ.
       *****************************************************************
       *  This routine should manage file reading
-       010-READ.
-           READ FILEIN1.
-           READ FILEIN2.
-      *                                                               *
+           READ FILEIN1
+           READ FILEIN2
+           .
       *****************************************************************
 
       *****************************************************************
       *  Routine 1 : Read, compare 2 files and write in 3 other files.
       *****************************************************************
+       100-FILES.
       *****************************************************************
       *  This routine should read files 1 & 2 until one is finish (LbL)
-       100-FILES.
            PERFORM UNTIL (FS-FC-F1 OR FS-FC-F2)
                 PERFORM 010-READ
                 PERFORM 101-COMPARE
-           END-PERFORM.
+           END-PERFORM
+           .
 
-       100-EXIT.
-           EXIT.
-      *                                                               *
-      *****************************************************************
-      *                                                               *
        101-COMPARE.
+      *****************************************************************
+      *  This routine should check files-status                                                             
            EVALUATE TRUE
                WHEN NOT (FS-FC-F1 OR FS-FC-F2)
                   PERFORM 102-COMPARE1TO2
@@ -145,51 +159,56 @@
                   PERFORM 111-MOVE1OUT2-AFTER
                WHEN     FS-FC-F1 OR  NOT FS-FC-F2
                   PERFORM 112-MOVE2OUT3-AFTER
-           END-EVALUATE.
-      *                                                               *    
+           END-EVALUATE
+           .
+
+       102-COMPARE1TO2.
       *****************************************************************
       *  This routine should compare if line from f1 & f2 are the same
-       102-COMPARE1TO2.
            EVALUATE FILEIN1-ENREG
               WHEN  FILEIN2-ENREG
                  PERFORM 122-MOVE12OUT1
               WHEN OTHER
                  PERFORM 123-MOVE1OUT2
                  PERFORM 124-MOVE2OUT3
-           END-EVALUATE.
-      *                                                               *    
+           END-EVALUATE
+           .
+
+       111-MOVE1OUT2-AFTER.
       *****************************************************************
       *  This routine should finish read FILEIN1 until its end.
-       111-MOVE1OUT2-AFTER.
            PERFORM UNTIL FS-FC-F1
               PERFORM 123-MOVE1OUT2
               PERFORM 010-READ
-           END-PERFORM.
-      *                                                               *    
+           END-PERFORM
+           .
+
+       112-MOVE2OUT3-AFTER.
       *****************************************************************
       *  This routine should finish read FILEIN2 until its end.
-       112-MOVE2OUT3-AFTER.
            PERFORM UNTIL FS-FC-F2
               PERFORM 124-MOVE2OUT3
               PERFORM 010-READ
-           END-PERFORM.
-      *                                                               *    
+           END-PERFORM
+           .
+
+       122-MOVE12OUT1.
       *****************************************************************
       *  This routine should write data from FILEIN1 to file FILEOUT1
-       122-MOVE12OUT1.
-           WRITE FILEOUT1-ENREG FROM FILEIN1-ENREG.
-      *                                                               *    
+           WRITE FILEOUT1-ENREG FROM FILEIN1-ENREG
+           .
+
+       123-MOVE1OUT2.
       *****************************************************************
       *  This routine should write data from FILEIN1 to file FILEOUT2
-       123-MOVE1OUT2.
-           WRITE FILEOUT2-ENREG FROM FILEIN1-ENREG.
-      *                                                               *    
+           WRITE FILEOUT2-ENREG FROM FILEIN1-ENREG
+           .
+
+       124-MOVE2OUT3.
       *****************************************************************
       *  This routine should write data from FILEIN2 to file FILEOUT3
-       124-MOVE2OUT3.
-           WRITE FILEOUT3-ENREG FROM FILEIN2-ENREG.
-      *                                                               *
-      *****************************************************************
+           WRITE FILEOUT3-ENREG FROM FILEIN2-ENREG
+           .
 
       *****************************************************************
       *  Routine 2 : Close files before closing the program.
@@ -199,6 +218,5 @@
                  FILEIN2,
                  FILEOUT1,
                  FILEOUT2,
-                 FILEOUT3.
-       999-EXIT.
-           EXIT.
+                 FILEOUT3
+           .

@@ -18,7 +18,7 @@
 
 # Notes:
 
-``PGM014FC`` & ``PGM014FS`` are copybooks.  
+``PGM014FC.cpy`` & ``PGM014FS.cpy`` are copybooks.  
 ``File0141`` & ``File0142`` are input files. (*just examples*)  
 ``jcl-compilation`.jcl`` & ``jcl-execution`.jcl`` are JCL code.   
 Be sure to verify the **JCL** to make sure that it works on your zOS.  
